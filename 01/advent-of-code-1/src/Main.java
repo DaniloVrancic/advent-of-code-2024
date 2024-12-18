@@ -37,6 +37,24 @@ public class Main {
 
         }while(line != null);
 
+        distanceCalculator(list1, list2);
+        similarityCalculator(list1,list2);
+    }
+
+    private static void similarityCalculator(List<Integer> list1, List<Integer> list2) {
+        List<Integer> similarities = new ArrayList<>();
+
+        list1.forEach(leftElement -> {
+            int occurences = (int)list2.stream().filter(rightElement -> leftElement.equals(rightElement)).count();
+
+            similarities.add(leftElement.intValue() * occurences);
+        });
+
+        System.out.println("The similarity value is: " + similarities.stream().mapToInt(element -> element.intValue()).sum());
+    }
+
+
+    private static void distanceCalculator(List<Integer> list1, List<Integer> list2) {
         List<Integer> distances = new ArrayList<>(); //All the differences for corresponding list members
         if(list1.size() == list2.size())
         {
@@ -51,7 +69,6 @@ public class Main {
         else{
             System.out.println("Lists are not of equal size!");
         }
-
     }
 
     public static void insertSorted(List<Integer> list, int value) {
