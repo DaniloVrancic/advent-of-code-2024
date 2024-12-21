@@ -14,8 +14,8 @@ public class Main {
     public static void main(String[] args) {
 
         long finalResult = 0;
-
-        final String myPattern = "mul\\((\\d{1,3}),(\\d{1,3})\\)";
+        boolean enabledRead = true;
+        final String myPattern = "do\\(\\)|don't\\(\\)|mul\\((\\d{1,3}),(\\d{1,3})\\)";
 
         Pattern pattern = Pattern.compile(myPattern);
         Matcher matcher = null;
@@ -32,6 +32,17 @@ public class Main {
 
 
                     while (matcher.find()) {
+                        if(matcher.group().equals("do()"))
+                        {
+                            enabledRead = true;
+                            continue;
+                        }
+                        else if(matcher.group().equals("don't()"))
+                        {
+                            enabledRead = false;
+                            continue;
+                        }
+                        if(enabledRead)
                         allMatchProducts.add(Long.parseLong(matcher.group(1)) * Long.parseLong(matcher.group(2)));
                     }
                     line = reader.readLine();
