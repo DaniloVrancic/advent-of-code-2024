@@ -4,10 +4,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
-    private static int REQUESTED_MIN_DISTANCE = 1;
-    private static int REQUESTED_MAX_DISTANCE = 3;
+    private final static int REQUESTED_MIN_DISTANCE = 1;
+    private final static int REQUESTED_MAX_DISTANCE = 3;
 
     private final static String fileInputPath= "resource/input.txt";
     public static void main(String[] args) {
@@ -37,25 +38,20 @@ public class Main {
             System.err.println("An unexpected error occured.");
             ex.printStackTrace();
         }
-
-
-        System.out.println("Hello world!");
     }
 
     public static boolean isReportSafe(List<Integer> reportList){
 
-        if(reportList.size() < 2)
-        {
-            return false;
-        }
-
-        if(reportList.get(0).equals(reportList.get(1))){ //if the first two elements are the same
-            return false;
-        }
 
         boolean isIncreasing = reportList.get(0) - reportList.get(1) < 0;
 
-        return (isStrictlyMonotone(reportList, isIncreasing) && areValidRanges(reportList, REQUESTED_MIN_DISTANCE, REQUESTED_MAX_DISTANCE));
+        if (isStrictlyMonotone(reportList, isIncreasing) && areValidRanges(reportList, REQUESTED_MIN_DISTANCE, REQUESTED_MAX_DISTANCE))
+        {
+            return true;
+        }
+        else{
+            return checkSingleLevelDampenedValues(reportList);
+        }
 
     }
 
@@ -89,6 +85,21 @@ public class Main {
         }
 
         return valid;
+    }
+
+    public static boolean checkSingleLevelDampenedValues(List<Integer> levels){
+        boolean isValid = false;
+        for(int i = 0; i < levels.size(); i++){
+            List<Integer> tempLevels = new ArrayList<>(levels);
+            tempLevels.remove(i);
+            boolean isIncreasing = tempLevels.get(0) - tempLevels.get(1) < 0;
+            isValid = isStrictlyMonotone(tempLevels, isIncreasing) && areValidRanges(tempLevels, REQUESTED_MIN_DISTANCE, REQUESTED_MAX_DISTANCE);
+
+            if(isValid){
+                return true; //if a single case of the removed level list is valid, then return the check as valid
+            }
+        }
+        return false;
     }
 
     public static List<Integer> parseReport(String reportString){
